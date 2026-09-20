@@ -33,17 +33,22 @@
     display:grid; place-items:center; font-size:.85rem; color:var(--muted); background:var(--paper);
   }
   .progress span.done{background:var(--ok); border-color:var(--ok); color:#fff}
+  .progress span.shown{background:var(--warn); border-color:var(--warn); color:#fff}
+  .legend{font-size:.78rem; color:var(--muted); width:100%; text-align:right}
+  .legend i{display:inline-block; width:10px; height:10px; border-radius:50%; vertical-align:middle; margin:0 3px 0 8px}
   main{max-width:900px; margin:0 auto; padding:24px 16px 80px}
   .card{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
     box-shadow:var(--shadow); padding:22px; margin-bottom:24px;
   }
   .card.done{border-color:#bcdcc8}
+  .card.shown{border-color:#efd9a8}
   h2{font-size:1.15rem; margin:0 0 6px; letter-spacing:.2px; display:flex; gap:10px; align-items:baseline}
   h2 .num{
     background:var(--accent); color:#fff; border-radius:8px; padding:1px 9px; font-size:.9rem;
     font-family:-apple-system,sans-serif;
   }
+  h3{font-size:.92rem; color:var(--accent); margin:20px 0 6px; font-family:-apple-system,sans-serif}
   .lead{color:var(--muted); font-size:.95rem; margin:0 0 16px}
   .ctx{
     background:var(--paper); border-left:3px solid var(--accent);
@@ -55,6 +60,7 @@
 
   /* --- Tafel --- */
   table.vft{border-collapse:collapse; width:100%; max-width:560px; margin:0 auto}
+  table.vft.mini{max-width:420px; margin:10px auto 16px}
   table.vft th, table.vft td{border:1px solid var(--line); padding:0; text-align:center}
   table.vft th{
     background:var(--paper); font-family:-apple-system,sans-serif; font-size:.85rem;
@@ -62,6 +68,8 @@
   }
   table.vft th.ev{color:var(--ink); font-size:1rem; font-family:"Iowan Old Style",Palatino,Georgia,serif; font-style:italic; font-weight:500}
   table.vft td{height:50px; font-size:1.05rem}
+  table.vft.mini td{height:38px; font-size:.95rem}
+  table.vft.mini th{padding:5px 6px}
   table.vft td.given{background:#f7f5ef; font-weight:600}
   table.vft td.sum{background:var(--paper)}
   table.vft tr.sumrow td, table.vft td.total{background:#f0ece2}
@@ -71,11 +79,8 @@
     border-radius:0;
   }
   table.vft input::placeholder{color:#c8c2b5}
-  table.vft input:focus{background:var(--accent-soft)}
-  input.ok, select.ok{background:var(--ok-soft) !important; color:var(--ok) !important}
-  input.bad, select.bad{background:var(--bad-soft) !important; color:var(--bad) !important}
-  table.vft td:has(input.ok){outline:2px solid var(--ok); outline-offset:-2px}
-  table.vft td:has(input.bad){outline:2px solid var(--bad); outline-offset:-2px}
+  table.vft input:focus-visible{background:var(--accent-soft); box-shadow:inset 0 0 0 2px var(--accent)}
+
 
   /* --- Zeilenaufgaben --- */
   .rows{display:grid; gap:10px; margin:14px 0}
@@ -89,15 +94,18 @@
     font-family:inherit; font-size:1rem; padding:8px 10px; border:1px solid var(--line);
     border-radius:8px; background:#fff; color:var(--ink); outline:none;
   }
-  .row input:focus, .row select:focus{border-color:var(--accent); background:var(--accent-soft)}
+  .row input:focus-visible, .row select:focus-visible{border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft)}
+  /* Status: Farbe plus Randstil, damit es auch ohne Farbsehen unterscheidbar bleibt */
+  .row input.ok, .row select.ok, table.vft input.ok{background:var(--ok-soft); color:var(--ok)}
+  .row input.bad, .row select.bad, table.vft input.bad{background:var(--bad-soft); color:var(--bad)}
+  .row input.ok, .row select.ok{border:2px solid var(--ok)}
+  .row input.bad, .row select.bad{border:2px dashed var(--bad)}
+  table.vft td:has(input.ok){outline:2px solid var(--ok); outline-offset:-2px}
+  table.vft td:has(input.bad){outline:2px dashed var(--bad); outline-offset:-2px}
   .row input.num{width:110px; text-align:center}
   .row .ans{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
   .row .ans .unit{color:var(--muted); font-size:.9rem}
-  .row select{max-width:170px}
-  .pill{
-    font-family:-apple-system,sans-serif; font-size:.78rem; padding:2px 8px; border-radius:99px;
-    background:var(--accent-soft); color:var(--accent); font-weight:600;
-  }
+  .row select{max-width:190px}
 
   /* --- Steuerung --- */
   .bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:18px}
@@ -106,6 +114,7 @@
     background:var(--paper); color:var(--ink); border:1px solid var(--line); border-radius:9px; transition:.15s;
   }
   button:hover{background:var(--accent-soft); border-color:var(--accent)}
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
   button.primary{background:var(--accent); color:#fff; border-color:var(--accent)}
   button.primary:hover{background:#2f4a63}
   button:disabled{opacity:.45; cursor:not-allowed}
@@ -124,7 +133,7 @@
   details{margin-top:14px; font-size:.93rem}
   summary{cursor:pointer; color:var(--accent); font-family:-apple-system,sans-serif; font-size:.88rem}
   details .body{margin-top:8px; background:var(--paper); padding:12px 14px; border-radius:9px}
-  details ol{margin:6px 0 0; padding-left:22px}
+  details ol, details ul{margin:6px 0 0; padding-left:22px}
   details li{margin-bottom:5px}
 
   .final{
@@ -132,12 +141,15 @@
     border-radius:var(--radius); display:none; font-size:1.05rem;
   }
   .final.show{display:block}
+  .final.shown{background:var(--warn-soft); border-color:#efd9a8}
   footer{color:var(--muted); font-size:.82rem; text-align:center; margin-top:30px}
+  .vh{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
   @media(max-width:600px){
     body{font-size:16px} main{padding:16px 12px 60px} .card{padding:16px 14px}
     .row{grid-template-columns:1fr} .row .ans{justify-content:flex-start}
     table.vft td, table.vft input{height:46px; font-size:1rem}
     .progress span{width:26px; height:26px; font-size:.78rem}
+    .legend{text-align:left}
   }
 </style>
 </head>
@@ -149,19 +161,21 @@
       <h1>Vierfeldertafel: Üben mit Selbstkontrolle</h1>
       <p class="ui">Mathematik Klasse 10 · Hausaufgabe zu Lambacher Schweizer I.2 (S. 13–15)</p>
     </div>
-    <div class="progress ui" id="progress" aria-label="Fortschritt">
-      <span data-p="1">1</span><span data-p="2">2</span><span data-p="3">3</span><span data-p="4">4</span>
+    <div class="progress ui" id="progress" role="list" aria-label="Fortschritt">
+      <span role="listitem" data-p="1" aria-label="Aufgabe 1: offen">1</span><span role="listitem" data-p="2" aria-label="Aufgabe 2: offen">2</span><span role="listitem" data-p="3" aria-label="Aufgabe 3: offen">3</span><span role="listitem" data-p="4" aria-label="Aufgabe 4: offen">4</span>
     </div>
+    <div class="legend ui" aria-hidden="true"><i style="background:var(--ok)"></i>selbst gelöst <i style="background:var(--warn)"></i>mit angezeigter Lösung</div>
   </div>
 </header>
 
 <main>
 
 <div class="ctx" style="margin-bottom:24px">
-  <b>So arbeitest du:</b> Löse jede Aufgabe im Kopf oder auf dem iPad und trage die Ergebnisse ein.
-  Klicke dann auf <b>Prüfen</b>. Richtige Felder werden grün, falsche rot. Nach zwei Versuchen
-  kannst du dir die Lösung anzeigen lassen. Erst dann geht es sinnvoll weiter.
-  Notiere dir für die nächste Stunde, wo du hängen geblieben bist.
+  <b>So arbeitest du:</b> Rechne jede Aufgabe zuerst im Notizprogramm auf dem iPad. Trage dann die
+  Ergebnisse hier ein und klicke auf <b>Prüfen</b>. Richtige Felder werden grün, falsche rot, dazu
+  bekommst du einen Hinweis. Wenn du nach zwei Versuchen mit veränderten Eingaben nicht weiterkommst, kannst du dir die
+  Lösung anzeigen lassen. Die Aufgabe zählt dann als „mit Lösung“ (orange), nicht als „selbst gelöst“ (grün).
+  Notiere dir für die nächste Stunde: Welche Aufgabe war am schwersten, und woran lag es?
 </div>
 
 <!-- ============ AUFGABE 1 ============ -->
@@ -171,9 +185,9 @@
     Zeilensummen und Spaltensummen.</p>
 
   <table class="vft" id="tab1">
-    <tr><th></th><th class="ev">B</th><th class="ev"><span class="ov">B</span></th><th>Summe</th></tr>
+    <tr><th></th><th class="ev">B</th><th class="ev"><span class="ov">B</span><span class="vh"> quer</span></th><th>Summe</th></tr>
     <tr><th class="ev">A</th><td data-k="ab"></td><td data-k="abq"></td><td class="sum" data-k="a"></td></tr>
-    <tr><th class="ev"><span class="ov">A</span></th><td data-k="aqb"></td><td data-k="aqbq"></td><td class="sum" data-k="aq"></td></tr>
+    <tr><th class="ev"><span class="ov">A</span><span class="vh"> quer</span></th><td data-k="aqb"></td><td data-k="aqbq"></td><td class="sum" data-k="aq"></td></tr>
     <tr class="sumrow"><th>Summe</th><td data-k="b"></td><td data-k="bq"></td><td class="total" data-k="tot"></td></tr>
   </table>
 
@@ -183,13 +197,14 @@
     <button data-new="1">Neue Tafel</button>
     <span class="tries" data-tries="1"></span>
   </div>
-  <div class="fb" data-fb="1"></div>
+  <div class="fb" data-fb="1" role="status" aria-live="polite"></div>
   <details>
     <summary>Tipp: Wo fängt man an?</summary>
     <div class="body">
-      Suche eine Zeile oder Spalte, in der schon <b>zwei</b> von drei Zahlen stehen. Die dritte
-      ergibt sich durch Addieren oder Subtrahieren. Dann wiederholen, bis alles voll ist.
-      Zum Schluss prüfen: Die letzte Zeile und die letzte Spalte müssen dieselbe Gesamtsumme ergeben.
+      Suche eine Zeile oder Spalte, in der schon <b>zwei</b> von drei Zahlen stehen. Fehlt die Summe,
+      addierst du. Fehlt ein Feld, subtrahierst du vom Summenwert. Dann wiederholen, bis alles voll ist.
+      Zum Schluss prüfen: <b>Jede</b> Zeile und <b>jede</b> Spalte muss ihre Summe ergeben, und die
+      Gesamtsumme rechts unten muss von beiden Seiten stimmen.
     </div>
   </details>
 </section>
@@ -197,7 +212,9 @@
 <!-- ============ AUFGABE 2 ============ -->
 <section class="card" id="t2">
   <h2><span class="num">2</span> Aus dem Text eine Tafel bauen</h2>
-  <p class="lead">Wie Aufgabe 4 und 5 im Buch. Lies genau, welche Zahl zu welchem Feld gehört.</p>
+  <p class="lead">Wie Aufgabe 4 und 5 im Buch. Lege zuerst im Notizprogramm selbst fest, welche zwei
+    Merkmale du nimmst und wie du sie abkürzt. Baue dort die Tafel. Übertrage sie erst dann hierher.
+    Hier heißen die Merkmale <span class="sym">B</span> und <span class="sym">H</span>.</p>
 
   <div class="ctx">
     In einer 10. Klasse sind <b>30</b> Schülerinnen und Schüler. <b>18</b> von ihnen kommen mit dem
@@ -206,14 +223,14 @@
     <span class="ui" style="font-size:.88rem; color:var(--muted)">
       Symbole: <span class="sym">B</span> = kommt mit dem Bus,
       <span class="sym">H</span> = hat ein Haustier.
-      <span class="sym"><span class="ov">B</span></span> und <span class="sym"><span class="ov">H</span></span> sind die Gegenereignisse.
+      <span class="sym"><span class="ov">B</span></span> und <span class="sym"><span class="ov">H</span></span> sind die Gegenereignisse („nicht“).
     </span>
   </div>
 
   <table class="vft" id="tab2">
-    <tr><th></th><th class="ev">H</th><th class="ev"><span class="ov">H</span></th><th>Summe</th></tr>
+    <tr><th></th><th class="ev">H</th><th class="ev"><span class="ov">H</span><span class="vh"> quer</span></th><th>Summe</th></tr>
     <tr><th class="ev">B</th><td data-k="ab"></td><td data-k="abq"></td><td class="sum" data-k="a"></td></tr>
-    <tr><th class="ev"><span class="ov">B</span></th><td data-k="aqb"></td><td data-k="aqbq"></td><td class="sum" data-k="aq"></td></tr>
+    <tr><th class="ev"><span class="ov">B</span><span class="vh"> quer</span></th><td data-k="aqb"></td><td data-k="aqbq"></td><td class="sum" data-k="aq"></td></tr>
     <tr class="sumrow"><th>Summe</th><td data-k="b"></td><td data-k="bq"></td><td class="total" data-k="tot"></td></tr>
   </table>
 
@@ -222,18 +239,23 @@
     <button data-solve="2" disabled>Lösung anzeigen</button>
     <span class="tries" data-tries="2"></span>
   </div>
-  <div class="fb" data-fb="2"></div>
+  <div class="fb" data-fb="2" role="status" aria-live="polite"></div>
   <details>
     <summary>Tipp: Welche Zahl gehört wohin?</summary>
     <div class="body">
+      Frage bei jeder Zahl: <b>Von welcher Gruppe</b> ist die Rede, und wird <b>eine</b> Eigenschaft
+      oder die <b>Kombination beider</b> Eigenschaften beschrieben?
       <ol>
-        <li>„30 Schülerinnen und Schüler“: Gesamtsumme, rechts unten.</li>
-        <li>„18 kommen mit dem Bus“: Das ist die ganze Zeile <span class="sym">B</span>, also eine Randzelle.</li>
-        <li>„12 haben ein Haustier“: die ganze Spalte <span class="sym">H</span>, auch eine Randzelle.</li>
-        <li>„<b>Von den Busfahrenden</b> haben 7 ein Haustier“: Das ist Bus <b>und</b> Haustier gleichzeitig,
-          also das Feld <span class="sym">B ∩ H</span> mitten in der Tafel.</li>
+        <li>„30 Schülerinnen und Schüler“: die ganze Klasse, Gesamtsumme rechts unten.</li>
+        <li>„18 von ihnen kommen mit dem Bus“: „ihnen“ meint die ganze Klasse, eine Eigenschaft (Bus).
+          Das ist die ganze Zeile <span class="sym">B</span>, also die Randzelle rechts.</li>
+        <li>„12 Kinder der Klasse haben ein Haustier“: wieder die ganze Klasse, eine Eigenschaft.
+          Die ganze Spalte <span class="sym">H</span>, Randzelle unten.</li>
+        <li>„<b>Von den Busfahrenden</b> haben 7 ein Haustier“: Die Gruppe ist jetzt nur die Bus-Zeile, und
+          die 7 haben Bus <b>und</b> Haustier. Das ist das Innenfeld <span class="sym">B ∩ H</span>.</li>
       </ol>
-      Der Rest folgt durch Subtrahieren wie in Aufgabe 1.
+      Der Rest wie in Aufgabe 1: fehlende Summe durch Addieren, fehlendes Feld durch Subtrahieren.
+      Zum Schluss prüfen, ob alle vier Textzahlen noch an ihrer Stelle stehen.
     </div>
   </details>
 </section>
@@ -250,32 +272,32 @@
   </div>
 
   <table class="vft" id="tab3">
-    <tr><th></th><th class="ev">R</th><th class="ev"><span class="ov">R</span></th><th>Summe</th></tr>
+    <tr><th></th><th class="ev">R</th><th class="ev"><span class="ov">R</span><span class="vh"> quer</span></th><th>Summe</th></tr>
     <tr><th class="ev">D</th><td class="given">45</td><td class="given">35</td><td class="given sum">80</td></tr>
-    <tr><th class="ev"><span class="ov">D</span></th><td class="given">52</td><td class="given">68</td><td class="given sum">120</td></tr>
+    <tr><th class="ev"><span class="ov">D</span><span class="vh"> quer</span></th><td class="given">52</td><td class="given">68</td><td class="given sum">120</td></tr>
     <tr class="sumrow"><th>Summe</th><td class="given">97</td><td class="given">103</td><td class="given total">200</td></tr>
   </table>
 
-  <h3 class="ui" style="font-size:.92rem; color:var(--accent); margin:20px 0 6px">a) Wie viele Gäste gehören zu dem Ereignis?</h3>
+  <h3>a) Wie viele Gäste gehören zu dem Ereignis?</h3>
   <div class="rows" id="t3a">
-    <div class="row"><div class="q"><span class="sym">D</span><small>Gast hat eine Dauerkarte</small></div>
-      <div class="ans"><input class="num" inputmode="numeric" data-ans="80"></div></div>
-    <div class="row"><div class="q"><span class="sym"><span class="ov">R</span></span><small>Gast ist nicht mit dem Rad gekommen</small></div>
-      <div class="ans"><input class="num" inputmode="numeric" data-ans="103"></div></div>
-    <div class="row"><div class="q"><span class="sym">D ∩ R</span><small>Dauerkarte und mit dem Rad</small></div>
-      <div class="ans"><input class="num" inputmode="numeric" data-ans="45"></div></div>
-    <div class="row"><div class="q"><span class="sym"><span class="ov">D</span> ∩ <span class="ov">R</span></span><small>keine Dauerkarte und nicht mit dem Rad</small></div>
-      <div class="ans"><input class="num" inputmode="numeric" data-ans="68"></div></div>
+    <div class="row"><div class="q" id="q3a1"><span class="sym">D</span><small>Gast hat eine Dauerkarte</small></div>
+      <div class="ans"><input class="num" inputmode="numeric" data-ans="80" data-kind="rand" aria-labelledby="q3a1"></div></div>
+    <div class="row"><div class="q" id="q3a2"><span class="sym"><span class="ov">R</span></span><small>Gast ist nicht mit dem Rad gekommen</small></div>
+      <div class="ans"><input class="num" inputmode="numeric" data-ans="103" data-kind="rand" aria-labelledby="q3a2"></div></div>
+    <div class="row"><div class="q" id="q3a3"><span class="sym">D ∩ R</span><small>Dauerkarte und mit dem Rad</small></div>
+      <div class="ans"><input class="num" inputmode="numeric" data-ans="45" data-kind="inner" aria-labelledby="q3a3"></div></div>
+    <div class="row"><div class="q" id="q3a4"><span class="sym"><span class="ov">D</span> ∩ <span class="ov">R</span></span><small>keine Dauerkarte und nicht mit dem Rad</small></div>
+      <div class="ans"><input class="num" inputmode="numeric" data-ans="68" data-kind="inner" aria-labelledby="q3a4"></div></div>
   </div>
 
-  <h3 class="ui" style="font-size:.92rem; color:var(--accent); margin:20px 0 6px">b) Welches Symbol passt zur Beschreibung?</h3>
+  <h3>b) Welches Symbol passt zur Beschreibung?</h3>
   <div class="rows" id="t3b">
-    <div class="row"><div class="q">Gast hat <b>keine</b> Dauerkarte und kommt mit dem Rad.<small>Wie viele sind das? Zur Kontrolle: 52</small></div>
-      <div class="ans"><select data-ans="aqb"></select></div></div>
-    <div class="row"><div class="q">Gast kommt <b>nicht</b> mit dem Rad. Ob Dauerkarte oder nicht, spielt keine Rolle.<small>Zur Kontrolle: 103</small></div>
-      <div class="ans"><select data-ans="bq"></select></div></div>
-    <div class="row"><div class="q">Gast hat eine Dauerkarte und kommt <b>nicht</b> mit dem Rad.<small>Zur Kontrolle: 35</small></div>
-      <div class="ans"><select data-ans="abq"></select></div></div>
+    <div class="row"><div class="q" id="q3b1">Gast hat <b>keine</b> Dauerkarte und kommt mit dem Rad.</div>
+      <div class="ans"><select data-ans="aqb" aria-labelledby="q3b1"></select></div></div>
+    <div class="row"><div class="q" id="q3b2">Gast kommt <b>nicht</b> mit dem Rad. Ob Dauerkarte oder nicht, spielt keine Rolle.</div>
+      <div class="ans"><select data-ans="bq" aria-labelledby="q3b2"></select></div></div>
+    <div class="row"><div class="q" id="q3b3">Gast hat eine Dauerkarte und kommt <b>nicht</b> mit dem Rad.</div>
+      <div class="ans"><select data-ans="abq" aria-labelledby="q3b3"></select></div></div>
   </div>
 
   <div class="bar">
@@ -283,14 +305,16 @@
     <button data-solve="3" disabled>Lösung anzeigen</button>
     <span class="tries" data-tries="3"></span>
   </div>
-  <div class="fb" data-fb="3"></div>
+  <div class="fb" data-fb="3" role="status" aria-live="polite"></div>
   <details>
     <summary>Tipp: Was heißt der Strich, was heißt ∩?</summary>
     <div class="body">
       Der Strich über einem Buchstaben heißt „nicht“: <span class="sym"><span class="ov">R</span></span> = nicht mit dem Rad.
-      Das Zeichen <span class="sym">∩</span> heißt „und gleichzeitig“: <span class="sym">D ∩ R</span> = Dauerkarte <b>und</b> Rad.
-      Ein einzelner Buchstabe ohne ∩ meint eine ganze Zeile oder Spalte, also eine <b>Randzelle</b>.
-      Ein Ausdruck mit ∩ meint genau <b>ein Feld</b> in der Mitte.
+      Das Zeichen <span class="sym">∩</span> heißt „und gleichzeitig“: <span class="sym">D ∩ R</span> = Dauerkarte <b>und</b> Rad.<br>
+      Zu einem einzelnen Buchstaben wie <span class="sym">D</span> gehören alle Gäste einer ganzen Zeile
+      oder Spalte. Ihre Anzahl steht in der <b>Randzelle</b>. Zu einem Ausdruck mit ∩ gehören die Gäste
+      mit beiden Eigenschaften. Ihre Anzahl steht in <b>einem Innenfeld</b>.<br>
+      Kontrollzahlen für b): 52, 103, 35.
     </div>
   </details>
 </section>
@@ -298,25 +322,33 @@
 <!-- ============ AUFGABE 4 ============ -->
 <section class="card" id="t4">
   <h2><span class="num">4</span> Anteile mit dem richtigen Grundwert</h2>
-  <p class="lead">Wie Aufgabe 1b im Buch. Bleib bei der Freibad-Tafel aus Aufgabe 3. Wähle zuerst
-    den Grundwert, dann berechne den Anteil in Prozent. Runde auf eine Nachkommastelle.</p>
+  <p class="lead">Wie Aufgabe 1b im Buch. Noch einmal die Freibad-Tafel. Frage dich bei jeder Aufgabe:
+    <b>Von wem ist die Rede?</b> Diese Gruppe ist der Grundwert. Wähle ihn aus, berechne den Anteil und
+    runde auf eine Nachkommastelle (genauer darf es auch sein).</p>
+
+  <table class="vft mini" aria-label="Freibad-Tafel, Kopie aus Aufgabe 3">
+    <tr><th></th><th class="ev">R</th><th class="ev"><span class="ov">R</span><span class="vh"> quer</span></th><th>Summe</th></tr>
+    <tr><th class="ev">D</th><td class="given">45</td><td class="given">35</td><td class="given sum">80</td></tr>
+    <tr><th class="ev"><span class="ov">D</span><span class="vh"> quer</span></th><td class="given">52</td><td class="given">68</td><td class="given sum">120</td></tr>
+    <tr class="sumrow"><th>Summe</th><td class="given">97</td><td class="given">103</td><td class="given total">200</td></tr>
+  </table>
 
   <div class="rows" id="t4r">
     <div class="row">
-      <div class="q">(1) Wie viel Prozent <b>aller Gäste</b> haben eine Dauerkarte?</div>
-      <div class="ans"><select data-g="200"></select><input class="num" inputmode="decimal" data-ans="40" placeholder="%"><span class="unit">%</span></div>
+      <div class="q" id="q41">(1) Wie viel Prozent <b>aller Gäste</b> haben eine Dauerkarte?</div>
+      <div class="ans"><select data-g="200" aria-label="Grundwert zu Frage 1"></select><input class="num" inputmode="decimal" data-ans="40" placeholder="%" aria-labelledby="q41"><span class="unit">%</span></div>
     </div>
     <div class="row">
-      <div class="q">(2) Wie viel Prozent <b>aller Gäste</b> haben eine Dauerkarte <b>und</b> kommen mit dem Rad?</div>
-      <div class="ans"><select data-g="200"></select><input class="num" inputmode="decimal" data-ans="22.5" placeholder="%"><span class="unit">%</span></div>
+      <div class="q" id="q42">(2) Wie viel Prozent <b>aller Gäste</b> haben eine Dauerkarte <b>und</b> kommen mit dem Rad?</div>
+      <div class="ans"><select data-g="200" aria-label="Grundwert zu Frage 2"></select><input class="num" inputmode="decimal" data-ans="22.5" placeholder="%" aria-labelledby="q42"><span class="unit">%</span></div>
     </div>
     <div class="row">
-      <div class="q">(3) Wie viel Prozent <b>der Dauerkarten-Gäste</b> kommen mit dem Rad?<small>Grundwert ist hier nur eine Gruppe, nicht alle 200.</small></div>
-      <div class="ans"><select data-g="80"></select><input class="num" inputmode="decimal" data-ans="56.25" placeholder="%"><span class="unit">%</span></div>
+      <div class="q" id="q43">(3) Wie viel Prozent <b>der Dauerkarten-Gäste</b> kommen mit dem Rad?</div>
+      <div class="ans"><select data-g="80" aria-label="Grundwert zu Frage 3"></select><input class="num" inputmode="decimal" data-ans="56.25" placeholder="%" aria-labelledby="q43"><span class="unit">%</span></div>
     </div>
     <div class="row">
-      <div class="q">(4) Wie viel Prozent <b>der Radfahrenden</b> haben eine Dauerkarte?<small>Gleiche Zahl im Zähler wie bei (3). Warum kommt trotzdem etwas anderes heraus?</small></div>
-      <div class="ans"><select data-g="97"></select><input class="num" inputmode="decimal" data-ans="46.39" placeholder="%"><span class="unit">%</span></div>
+      <div class="q" id="q44">(4) Wie viel Prozent <b>der Radfahrenden</b> haben eine Dauerkarte?<small>Gleiche Zahl im Zähler wie bei (3). Warum kommt trotzdem etwas anderes heraus?</small></div>
+      <div class="ans"><select data-g="97" aria-label="Grundwert zu Frage 4"></select><input class="num" inputmode="decimal" data-ans="46.391752577" placeholder="%" aria-labelledby="q44"><span class="unit">%</span></div>
     </div>
   </div>
 
@@ -325,23 +357,21 @@
     <button data-solve="4" disabled>Lösung anzeigen</button>
     <span class="tries" data-tries="4"></span>
   </div>
-  <div class="fb" data-fb="4"></div>
+  <div class="fb" data-fb="4" role="status" aria-live="polite"></div>
   <details>
     <summary>Tipp: Wie finde ich den Grundwert?</summary>
     <div class="body">
-      Frage dich: <b>Von wem</b> ist die Rede? „Von allen Gästen“ heißt Grundwert 200 (rechts unten).
+      „Von allen Gästen“ heißt Grundwert 200 (rechts unten).
       „Von den Dauerkarten-Gästen“ heißt: Nur die Zeile <span class="sym">D</span> zählt, Grundwert ist
       die Zeilensumme 80. „Von den Radfahrenden“ heißt: Nur die Spalte <span class="sym">R</span> zählt,
-      Grundwert ist die Spaltensumme 97. Der Grundwert steht <b>immer in einer Randzelle</b>.
-      Dann: Anteil = Feld ÷ Grundwert · 100 %.
+      Grundwert ist die Spaltensumme 97. In unseren Aufgaben ist der Grundwert also immer eine Randzelle.<br>
+      Dann: Anteil = gesuchte Anzahl ÷ Grundwert · 100 %. Die gesuchte Anzahl kann ein Innenfeld sein
+      (bei „und“) oder auch eine Randzelle (bei nur einer Eigenschaft).
     </div>
   </details>
 </section>
 
-<div class="final" id="final">
-  <b class="ui">Alle vier Aufgaben geschafft.</b><br>
-  Schreib dir auf, welche Aufgabe am schwersten war. Das besprechen wir in der nächsten Stunde.
-</div>
+<div class="final" id="final" role="status"></div>
 
 <footer class="ui">Paul-Klee-Gymnasium Overath · Mathematik Klasse 10 · Selbstlernmaterial ohne Datenerfassung ·
   <a href="#" id="reset" style="color:var(--muted)">Fortschritt zurücksetzen</a></footer>
@@ -351,30 +381,39 @@
 (function(){
   'use strict';
   const KEYS = ['ab','abq','a','aqb','aqbq','aq','b','bq','tot'];
+  const INNER = ['ab','abq','aqb','aqbq'];
   const $ = (s, r=document) => r.querySelector(s);
   const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-  // ---------- Hilfen ----------
-  function parseNum(s){
-    if(s == null) return NaN;
-    s = String(s).trim().replace(/\s/g,'').replace('%','').replace(',','.');
-    if(s === '') return NaN;
-    return Number(s);
+  // ---------- Eingaben lesen ----------
+  // Anzahl: nur nichtnegative ganze Zahlen. Rückgabe: {state:'empty'|'invalid'|'ok', val}
+  function readCount(str){
+    const t = String(str ?? '').trim();
+    if(t === '') return {state:'empty', val:NaN};
+    if(!/^\d+$/.test(t)) return {state:'invalid', val:NaN};
+    return {state:'ok', val:Number(t)};
+  }
+  // Prozent: Zahl mit Komma oder Punkt, höchstens ein Prozentzeichen am Ende
+  function readPct(str){
+    const t = String(str ?? '').trim();
+    if(t === '') return {state:'empty', val:NaN};
+    const m = /^(\d+)([.,](\d+))?\s*%?$/.exec(t);
+    if(!m) return {state:'invalid', val:NaN};
+    return {state:'ok', val:Number(m[1] + (m[3] ? '.' + m[3] : ''))};
   }
   function fullTable(ab, abq, aqb, aqbq){
     return {ab, abq, a:ab+abq, aqb, aqbq, aq:aqb+aqbq, b:ab+aqb, bq:abq+aqbq, tot:ab+abq+aqb+aqbq};
   }
-  // Ergänzt eine teilweise gefüllte Tafel; gibt null zurück, wenn sie nicht eindeutig ist.
+  const RULES = [
+    ['a','ab','abq','Zeile 1'], ['aq','aqb','aqbq','Zeile 2'], ['tot','a','aq','Summenspalte'],
+    ['b','ab','aqb','Spalte 1'], ['bq','abq','aqbq','Spalte 2'], ['tot','b','bq','Summenzeile']
+  ];
   function solve(known){
     const t = Object.assign({}, known);
-    const rules = [
-      ['a','ab','abq'], ['aq','aqb','aqbq'], ['tot','a','aq'],
-      ['b','ab','aqb'], ['bq','abq','aqbq'], ['tot','b','bq']
-    ];
     let changed = true;
     while(changed){
       changed = false;
-      for(const [s,x,y] of rules){
+      for(const [s,x,y] of RULES){
         const hs = t[s]!=null, hx = t[x]!=null, hy = t[y]!=null;
         if(hx && hy && !hs){ t[s] = t[x]+t[y]; changed = true; }
         else if(hs && hx && !hy){ t[y] = t[s]-t[x]; changed = true; }
@@ -383,60 +422,110 @@
     }
     return KEYS.every(k => t[k]!=null) ? t : null;
   }
+  // Prüft nur Zeilen/Spalten, in denen alle drei Zahlen gültig sind.
+  // Rückgabe: {broken:[Namen], checked:Anzahl geprüfter Beziehungen}
+  function sumCheck(vals){
+    let checked = 0; const broken = [];
+    RULES.forEach(([s,x,y,name]) => {
+      if([s,x,y].every(k => Number.isFinite(vals[k]))){ checked++; if(vals[x]+vals[y] !== vals[s]) broken.push(name); }
+    });
+    return {broken, checked};
+  }
   const rnd = (lo, hi) => lo + Math.floor(Math.random()*(hi-lo+1));
+  // Prozentwert akzeptieren, wenn er exakt oder korrekt auf 1 bzw. 2 Nachkommastellen gerundet ist
+  function pctOk(got, exact){
+    if(!Number.isFinite(got)) return false;
+    const r1 = Math.round(exact*10)/10, r2 = Math.round(exact*100)/100;
+    return [exact, r1, r2].some(v => Math.abs(got - v) < 0.0005);
+  }
+  const fmt1 = v => (Math.round(v*10)/10).toString().replace('.',',');
+  const plural = (n, w) => `${n} ${w}${n===1?'':'er'}`;
 
   // ---------- Fortschritt ----------
-  const state = {done:{}, tries:{1:0,2:0,3:0,4:0}};
+  // status[n]: 'done' (selbst gelöst) oder 'shown' (Lösung angezeigt); revealed[n] bleibt gespeichert
+  const state = {status:{}, revealed:{}, tries:{1:0,2:0,3:0,4:0}, lastSig:{}};
   try{
     const s = JSON.parse(localStorage.getItem('vft-uebung') || '{}');
-    if(s && s.done) state.done = s.done;
+    if(s && s.status) state.status = s.status;
+    if(s && s.revealed) state.revealed = s.revealed;
   }catch(e){}
-  function save(){ try{ localStorage.setItem('vft-uebung', JSON.stringify({done:state.done})); }catch(e){} }
-  function markDone(n){
-    state.done[n] = true; save();
-    $(`.progress span[data-p="${n}"]`).classList.add('done');
-    $(`#t${n}`).classList.add('done');
-    if([1,2,3,4].every(k => state.done[k])) $('#final').classList.add('show');
+  function save(){ try{ localStorage.setItem('vft-uebung', JSON.stringify({status:state.status, revealed:state.revealed})); }catch(e){} }
+  function setStatus(n, st){
+    if(state.status[n] === 'done' && st === 'shown') return; // einmal selbst gelöst bleibt grün
+    state.status[n] = st; save();
+    const dot = $(`.progress span[data-p="${n}"]`), card = $(`#t${n}`);
+    dot.classList.remove('done','shown'); card.classList.remove('done','shown');
+    dot.classList.add(st); card.classList.add(st);
+    dot.setAttribute('aria-label', `Aufgabe ${n}: ${st==='done' ? 'selbst gelöst' : 'mit angezeigter Lösung'}`);
+    const all = [1,2,3,4].every(k => state.status[k]);
+    const fin = $('#final');
+    if(all){
+      const own = [1,2,3,4].filter(k => state.status[k]==='done').length;
+      fin.className = 'final show' + (own < 4 ? ' shown' : '');
+      fin.innerHTML = own === 4
+        ? '<b class="ui">Alle vier Aufgaben selbst gelöst.</b><br>Schreib dir auf, welche am schwersten war und woran es lag. Das besprechen wir in der nächsten Stunde.'
+        : `<b class="ui">Alle vier Aufgaben bearbeitet, ${own} davon selbst gelöst.</b><br>Bei den orangen Aufgaben: Rechne die angezeigte Lösung im Notizprogramm einmal nach und schreib dir auf, wo dein Fehler lag. Das ist dein Gesprächsanlass für die nächste Stunde.`;
+    }
   }
-  Object.keys(state.done).forEach(n => { if(state.done[n]) markDone(Number(n)); });
+  Object.keys(state.status).forEach(n => setStatus(Number(n), state.status[n]));
 
   function feedback(n, kind, html){
     const fb = $(`.fb[data-fb="${n}"]`);
     fb.className = 'fb show ' + kind;
     fb.innerHTML = html;
+    // Tastatur schließen und Rückmeldung unter dem festen Kopf sichtbar machen
+    if(document.activeElement && document.activeElement.matches('input, select')) document.activeElement.blur();
+    requestAnimationFrame(() => {
+      const r = fb.getBoundingClientRect(), head = $('header').offsetHeight + 12;
+      if(r.top < head || r.bottom > window.innerHeight) window.scrollBy({top: r.top - head, behavior:'smooth'});
+    });
   }
-  function bumpTries(n){
+  function hideFeedback(n){ const fb = $(`.fb[data-fb="${n}"]`); if(fb.classList.contains('show')) fb.className = 'fb'; }
+  // Ein Versuch zählt nur, wenn sich die Eingaben seit dem letzten Prüfen geändert haben
+  function signature(n){ return $$('input, select', $(`#t${n}`)).map(el => el.value.trim()).join('|'); }
+  function bumpTries(n, hadInput){
+    if(!hadInput) return;
+    const sig = signature(n);
+    if(sig === state.lastSig[n]) return;
+    state.lastSig[n] = sig;
     state.tries[n]++;
     $(`.tries[data-tries="${n}"]`).textContent = `${state.tries[n]}. Versuch`;
     if(state.tries[n] >= 2) $(`button[data-solve="${n}"]`).disabled = false;
   }
-  function checkInputs(inputs, tol=0){
-    let allOk = true, empty = 0;
+  function mark(el, ok){
+    el.classList.remove('ok','bad');
+    el.classList.add(ok ? 'ok' : 'bad');
+    el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+  }
+  function clearMark(el){ el.classList.remove('ok','bad'); el.removeAttribute('aria-invalid'); }
+  // Prüft Anzahl-Eingaben. Rückgabe: {allOk, empty, invalid, filled}
+  function checkCounts(inputs){
+    let allOk = true, empty = 0, invalid = 0, filled = 0;
     inputs.forEach(inp => {
-      const want = Number(inp.dataset.ans);
-      const got = parseNum(inp.value);
-      inp.classList.remove('ok','bad');
-      if(inp.value.trim()===''){ empty++; allOk=false; inp.classList.add('bad'); return; }
-      const ok = Number.isFinite(got) && Math.abs(got - want) <= tol;
-      inp.classList.add(ok ? 'ok' : 'bad');
+      const {state:st, val} = readCount(inp.value);
+      if(st === 'empty'){ empty++; allOk = false; mark(inp,false); return; }
+      filled++;
+      if(st === 'invalid'){ invalid++; allOk = false; mark(inp,false); return; }
+      const ok = val === Number(inp.dataset.ans);
+      mark(inp, ok);
       if(!ok) allOk = false;
     });
-    return {allOk, empty};
+    return {allOk, empty, invalid, filled};
   }
-  function checkSelects(sels){
-    let allOk = true;
-    sels.forEach(sel => {
-      sel.classList.remove('ok','bad');
-      const ok = sel.value === sel.dataset.ans;
-      sel.classList.add(ok ? 'ok' : 'bad');
-      if(!ok) allOk = false;
-    });
-    return allOk;
-  }
+  const invalidTip = k => `${plural(k,'Feld')} mit ungültiger Eingabe: Hier gehören nur ganze Zahlen hin, ohne Prozentzeichen oder Buchstaben.`;
 
   // ---------- Tafel-Bau ----------
-  function buildTable(tableId, values, givenKeys){
-    $$('td[data-k]', $(tableId)).forEach(td => {
+  const LABELS = { 1:{A:'A', B:'B'}, 2:{A:'Bus', B:'Haustier'} };
+  function cellLabel(n, k){
+    const {A,B} = LABELS[n];
+    return {
+      ab:`${A} und ${B}`, abq:`${A} und nicht ${B}`, a:`Zeilensumme ${A}`,
+      aqb:`nicht ${A} und ${B}`, aqbq:`weder ${A} noch ${B}`, aq:`Zeilensumme nicht ${A}`,
+      b:`Spaltensumme ${B}`, bq:`Spaltensumme nicht ${B}`, tot:'Gesamtsumme'
+    }[k];
+  }
+  function buildTable(n, values, givenKeys){
+    $$('td[data-k]', $(`#tab${n}`)).forEach(td => {
       const k = td.dataset.k;
       td.innerHTML = '';
       td.classList.remove('given');
@@ -448,31 +537,38 @@
         inp.inputMode = 'numeric';
         inp.dataset.ans = values[k];
         inp.dataset.k = k;
-        inp.setAttribute('aria-label', 'Feld ' + k);
+        inp.setAttribute('aria-label', cellLabel(n, k));
         td.appendChild(inp);
       }
     });
   }
-  function tableInputs(tableId){ return $$('input', $(tableId)); }
+  const tableInputs = n => $$('input', $(`#tab${n}`));
+  function tableValues(n){
+    const v = {};
+    $$('td[data-k]', $(`#tab${n}`)).forEach(td => {
+      const inp = $('input', td);
+      v[td.dataset.k] = inp ? readCount(inp.value).val : Number(td.textContent);
+    });
+    return v;
+  }
 
   // ---------- Aufgabe 1: zufällige Tafel ----------
-  let T1 = null;
   function newT1(){
-    let vals, given;
-    for(let guard=0; guard<500; guard++){
+    let vals, given, ok = false;
+    for(let guard=0; guard<500 && !ok; guard++){
       vals = fullTable(rnd(6,60), rnd(6,60), rnd(6,60), rnd(6,60));
-      // vier zufällige Zellen, darunter höchstens zwei Innenfelder, keine reinen Randsummen
-      const pool = KEYS.slice().sort(()=>Math.random()-.5);
-      given = pool.slice(0,4);
-      const inner = given.filter(k => ['ab','abq','aqb','aqbq'].includes(k)).length;
+      // vier zufällige Zellen: mindestens ein Innenfeld und mindestens eine Randzelle,
+      // und die Tafel muss daraus eindeutig ergänzbar sein
+      given = KEYS.slice().sort(()=>Math.random()-.5).slice(0,4);
+      const inner = given.filter(k => INNER.includes(k)).length;
       if(inner === 4 || inner === 0) continue;
       const known = {}; given.forEach(k => known[k] = vals[k]);
-      if(solve(known)) break;
+      ok = !!solve(known);
     }
-    T1 = vals;
-    buildTable('#tab1', vals, given);
-    $('.fb[data-fb="1"]').className = 'fb';
-    state.tries[1] = 0;
+    if(!ok){ vals = fullTable(25, 34, 18, 23); given = ['ab','aqbq','aq','bq']; } // Buch 3a als Rückfall
+    buildTable(1, vals, given);
+    hideFeedback(1);
+    state.tries[1] = 0; state.lastSig[1] = undefined;
     $('.tries[data-tries="1"]').textContent = '';
     $('button[data-solve="1"]').disabled = true;
   }
@@ -480,16 +576,19 @@
 
   // ---------- Aufgabe 2: feste Tafel ----------
   const T2 = fullTable(7, 11, 5, 7); // B∩H, B∩H̄, B̄∩H, B̄∩H̄
-  buildTable('#tab2', T2, []);
+  buildTable(2, T2, []);
 
   // ---------- Aufgabe 3b und 4: Auswahlfelder ----------
   const SYM = {
-    a:'D', aq:'D̄', b:'R', bq:'R̄',
-    ab:'D ∩ R', abq:'D ∩ R̄', aqb:'D̄ ∩ R', aqbq:'D̄ ∩ R̄'
+    a:['D','D'], aq:['D̄','D quer, nicht D'], b:['R','R'], bq:['R̄','R quer, nicht R'],
+    ab:['D ∩ R','D geschnitten R'], abq:['D ∩ R̄','D geschnitten R quer'],
+    aqb:['D̄ ∩ R','D quer geschnitten R'], aqbq:['D̄ ∩ R̄','D quer geschnitten R quer']
   };
   $$('#t3b select').forEach(sel => {
     sel.appendChild(new Option('Symbol wählen …',''));
-    ['a','aq','b','bq','ab','abq','aqb','aqbq'].forEach(k => sel.appendChild(new Option(SYM[k], k)));
+    ['a','aq','b','bq','ab','abq','aqb','aqbq'].forEach(k => {
+      const o = new Option(SYM[k][0], k); o.setAttribute('aria-label', SYM[k][1]); sel.appendChild(o);
+    });
   });
   const GW = [['200','200 (alle Gäste)'],['80','80 (Zeile D)'],['120','120 (Zeile D̄)'],['97','97 (Spalte R)'],['103','103 (Spalte R̄)'],['45','45 (Feld D ∩ R)']];
   $$('#t4r select').forEach(sel => {
@@ -498,88 +597,150 @@
   });
 
   // ---------- Prüfen ----------
+  function finish(n, okText){
+    if(state.revealed[n]){
+      feedback(n,'hint', okText + ' <b>Diese Aufgabe zählt als „mit Lösung“</b>, weil du dir die Lösung angesehen hast. Rechne sie im Notizprogramm einmal ohne Hilfe nach.');
+      setStatus(n,'shown');
+    } else {
+      feedback(n,'ok', okText);
+      setStatus(n,'done');
+    }
+  }
+  const list = tips => '<ul>' + tips.map(t=>`<li>${t}</li>`).join('') + '</ul>';
+
   const checks = {
     1(){
-      const {allOk, empty} = checkInputs(tableInputs('#tab1'));
-      bumpTries(1);
-      if(allOk){ feedback(1,'ok','<b>Richtig.</b> Alle neun Felder stimmen. Du kannst mit „Neue Tafel“ noch eine üben.'); markDone(1); }
-      else if(empty) feedback(1,'hint',`<b>Noch ${empty} Feld${empty>1?'er':''} leer.</b> Fang bei einer Zeile oder Spalte an, in der schon zwei Zahlen stehen.`);
-      else feedback(1,'bad','<b>Noch nicht ganz.</b> Rote Felder passen nicht zu den Summen. Prüfe: Ergibt jede Zeile und jede Spalte ihre Summe? Ein Fehler zieht sich oft durch mehrere Felder, fang beim ersten roten Feld links oben an.');
+      const {allOk, empty, invalid, filled} = checkCounts(tableInputs(1));
+      bumpTries(1, filled > 0);
+      if(allOk){ finish(1, '<b>Richtig.</b> Alle neun Felder stimmen. Mit „Neue Tafel“ kannst du noch eine üben.'); return; }
+      if(!filled){ feedback(1,'hint','<b>Noch nichts eingetragen.</b> Fang bei einer Zeile oder Spalte an, in der schon zwei Zahlen stehen.'); return; }
+      const tips = [];
+      if(invalid) tips.push(invalidTip(invalid));
+      const {broken, checked} = sumCheck(tableValues(1));
+      if(broken.length) tips.push(`Geht nicht auf: <b>${broken.join(', ')}</b>. Rechne dort nach: Die beiden Felder müssen zusammen die Summe ergeben.`);
+      else if(checked === RULES.length) tips.push('Alle Summen gehen auf, aber die Zahlen passen nicht zu den vorgegebenen. Hast du eine vorgegebene Zahl in ein anderes Feld gesetzt?');
+      else if(checked) tips.push('Die bisher vollständigen Zeilen und Spalten gehen auf. Ein rotes Feld ist trotzdem falsch: Prüfe es über die andere Richtung (Zeile statt Spalte oder umgekehrt).');
+      if(empty) tips.push(`Noch ${plural(empty,'Feld')} leer.`);
+      feedback(1, (empty && !invalid && !broken.length) ? 'hint' : 'bad', '<b>Noch nicht ganz.</b>' + list(tips));
     },
     2(){
-      const inputs = tableInputs('#tab2');
-      const {allOk, empty} = checkInputs(inputs);
-      bumpTries(2);
-      if(allOk){ feedback(2,'ok','<b>Richtig.</b> 7 Kinder fahren Bus und haben ein Haustier, 11 fahren Bus ohne Haustier, 5 haben ein Haustier ohne Bus, 7 weder noch.'); markDone(2); return; }
-      const got = {}; inputs.forEach(i => got[i.dataset.k] = parseNum(i.value));
+      const {allOk, empty, invalid, filled} = checkCounts(tableInputs(2));
+      bumpTries(2, filled > 0);
+      if(allOk){ finish(2, '<b>Richtig.</b> 7 Kinder fahren Bus und haben ein Haustier, 11 fahren Bus ohne Haustier, 5 haben ein Haustier ohne Bus, 7 weder noch.'); return; }
+      if(!filled){ feedback(2,'hint','<b>Noch nichts eingetragen.</b> Baue die Tafel erst im Notizprogramm, dann übertrage sie.'); return; }
+      const got = tableValues(2);
       const tips = [];
-      if(got.ab !== 7 && (got.a === 7 || got.b === 7 || got.aqb === 7)) tips.push('„Von den Busfahrenden haben 7 ein Haustier“ meint Bus <b>und</b> Haustier gleichzeitig, also das Feld <i>B ∩ H</i>, nicht eine Randzelle.');
-      if(got.a !== 18 && (got.ab === 18 || got.b === 18)) tips.push('„18 kommen mit dem Bus“ ist die ganze Zeile <i>B</i>, also die Summe rechts in der Zeile.');
-      if(got.b !== 12 && (got.ab === 12 || got.a === 12)) tips.push('„12 haben ein Haustier“ ist die ganze Spalte <i>H</i>, also die Summe unten in der Spalte.');
-      if(got.tot !== 30) tips.push('Die Gesamtsumme 30 steht rechts unten.');
-      if(empty) tips.push(`Noch ${empty} Feld${empty>1?'er':''} leer.`);
-      if(!tips.length) tips.push('Die vier Zahlen aus dem Text sitzen richtig, ein Rechenfehler beim Subtrahieren. Prüfe Zeilen- und Spaltensummen.');
-      feedback(2, empty ? 'hint' : 'bad', '<b>Noch nicht ganz.</b><ul>' + tips.map(t=>`<li>${t}</li>`).join('') + '</ul>');
+      if(invalid) tips.push(invalidTip(invalid));
+      const has7 = KEYS.filter(k => got[k] === 7 && k !== 'ab' && T2[k] !== 7); // 7 an falscher Stelle
+      if(Number.isFinite(got.tot) && got.tot !== 30) tips.push('Die Gesamtsumme 30 gehört rechts unten.');
+      if(Number.isFinite(got.a) && got.a !== 18) tips.push('„18 von ihnen kommen mit dem Bus“ meint die ganze Klasse und eine Eigenschaft. Das ist die Zeilensumme <i>B</i> rechts in der ersten Zeile.');
+      if(Number.isFinite(got.b) && got.b !== 12) tips.push('„12 Kinder der Klasse haben ein Haustier“ ist die ganze Spalte <i>H</i>, also die Summe unten in der ersten Spalte.');
+      if(got.ab !== 7 && (has7.length || Number.isFinite(got.ab))){
+        tips.push(has7.length
+          ? '„Von den Busfahrenden haben 7 ein Haustier“: Die Gruppe ist nur die Bus-Zeile, und die 7 haben Bus <b>und</b> Haustier. Das ist das Innenfeld <i>B ∩ H</i> oben links, keine Randzelle.'
+          : 'Das Feld <i>B ∩ H</i> oben links steht direkt im Text: „Von den Busfahrenden haben 7 ein Haustier.“');
+      }
+      const textOk = got.tot===30 && got.a===18 && got.b===12 && got.ab===7;
+      if(textOk){
+        const {broken, checked} = sumCheck(got);
+        if(broken.length) tips.push(`Die vier Textzahlen sitzen richtig. Geht nicht auf: <b>${broken.join(', ')}</b>. Dort nachrechnen.`);
+        else if(checked === RULES.length) tips.push('Die vier Textzahlen sitzen richtig, aber ein anderes Feld passt nicht. Prüfe jede Zeile und jede Spalte einzeln.');
+        else tips.push('Die vier Textzahlen sitzen richtig. Ergänze die restlichen Felder: fehlende Summe addieren, fehlendes Feld subtrahieren.');
+      }
+      if(empty) tips.push(`Noch ${plural(empty,'Feld')} leer.`);
+      feedback(2, 'bad', '<b>Noch nicht ganz.</b>' + list(tips));
     },
     3(){
-      const r = checkInputs($$('#t3a input'));
-      const okSel = checkSelects($$('#t3b select'));
-      bumpTries(3);
-      if(r.allOk && okSel){ feedback(3,'ok','<b>Richtig.</b> Merke: Ein Buchstabe allein = Randzelle. Ein Ausdruck mit ∩ = ein Feld in der Mitte.'); markDone(3); return; }
+      const inputs = $$('#t3a input'), sels = $$('#t3b select');
+      const r = checkCounts(inputs);
+      let selOk = true, selFilled = 0;
+      sels.forEach(sel => { if(sel.value) selFilled++; const ok = sel.value === sel.dataset.ans; mark(sel, ok); if(!ok) selOk = false; });
+      bumpTries(3, r.filled + selFilled > 0);
+      if(r.allOk && selOk){ finish(3, '<b>Richtig.</b> Merke: Zu einem Buchstaben allein gehört eine ganze Zeile oder Spalte, die Anzahl steht in der Randzelle. Zu einem Ausdruck mit ∩ gehört ein Innenfeld.'); return; }
+      if(!r.filled && !selFilled){ feedback(3,'hint','<b>Noch nichts eingetragen.</b> Lies bei a) die Zahlen aus der Tafel ab, wähle bei b) ein Symbol.'); return; }
       const tips = [];
-      if(!r.allOk) tips.push('Bei a): Ein einzelnes Symbol wie <i>D</i> oder <i>R̄</i> meint die ganze Zeile bzw. Spalte. Lies die Zahl aus der Summe ab, nicht aus einem einzelnen Feld.');
-      if(!okSel) tips.push('Bei b): Steht im Satz „und“, brauchst du ein ∩. Steht „nicht“, brauchst du einen Querstrich über dem Buchstaben. Vergleiche mit der Kontrollzahl.');
-      feedback(3,'bad','<b>Noch nicht ganz.</b><ul>' + tips.map(t=>`<li>${t}</li>`).join('') + '</ul>');
+      if(r.invalid) tips.push(invalidTip(r.invalid));
+      inputs.forEach((inp, i) => {
+        if(inp.classList.contains('ok') || readCount(inp.value).state !== 'ok') return;
+        tips.push(inp.dataset.kind === 'rand'
+          ? `a) Zeile ${i+1}: Ein einzelnes Symbol meint eine ganze Zeile oder Spalte. Lies die <b>Summe</b> ab, nicht ein einzelnes Feld.`
+          : `a) Zeile ${i+1}: Ein Ausdruck mit ∩ meint genau <b>ein Innenfeld</b>, keine Summe. Prüfe: Welcher Buchstabe hat den Querstrich, welcher nicht?`);
+      });
+      sels.forEach((sel, i) => {
+        if(sel.classList.contains('ok') || !sel.value) return;
+        tips.push(`b) Zeile ${i+1}: Steht im Satz „und“, brauchst du ein ∩. Steht „nicht“, brauchst du einen Querstrich über genau dem Buchstaben, den es betrifft. „Spielt keine Rolle“ heißt: Dieses Merkmal kommt gar nicht vor.`);
+      });
+      if(r.empty || selFilled < sels.length) tips.push('Es fehlen noch Eingaben.');
+      feedback(3,'bad','<b>Noch nicht ganz.</b>' + list(tips));
     },
     4(){
       const rows = $$('#t4r .row');
-      let allOk = true; const tips = [];
+      let allOk = true, filled = 0; const tips = [];
       rows.forEach((row, i) => {
-        const sel = $('select', row), inp = $('input', row);
-        sel.classList.remove('ok','bad'); inp.classList.remove('ok','bad');
+        const sel = $('select', row), inp = $('input', row), nr = i+1;
+        if(sel.value) filled++;
         const gOk = sel.value === sel.dataset.g;
-        sel.classList.add(gOk ? 'ok' : 'bad');
-        const want = Number(inp.dataset.ans), got = parseNum(inp.value);
-        const pOk = Number.isFinite(got) && Math.abs(got - want) <= 0.16;
-        inp.classList.add(pOk ? 'ok' : 'bad');
+        mark(sel, gOk);
+        const p = readPct(inp.value);
+        if(p.state !== 'empty') filled++;
+        const pOk = p.state === 'ok' && pctOk(p.val, Number(inp.dataset.ans));
+        mark(inp, pOk);
         if(!gOk || !pOk) allOk = false;
-        if(!gOk && i >= 2) tips.push(`(${i+1}): „Von den …“ verrät den Grundwert. Es zählt nur eine Gruppe, also eine Zeilen- oder Spaltensumme, nicht alle 200.`);
-        if(!gOk && i < 2) tips.push(`(${i+1}): „aller Gäste“ heißt Grundwert 200.`);
-        if(gOk && !pOk) tips.push(`(${i+1}): Grundwert stimmt. Rechne Feld ÷ Grundwert · 100 und runde auf eine Nachkommastelle.`);
+        if(!sel.value) tips.push(`(${nr}): Grundwert fehlt noch.`);
+        else if(!gOk) tips.push(i >= 2
+          ? `(${nr}): „Von den …“ nennt die Gruppe. Es zählt nur eine Zeile oder Spalte, also eine Zeilen- oder Spaltensumme, nicht alle 200.`
+          : `(${nr}): „aller Gäste“ heißt Grundwert 200.`);
+        if(p.state === 'empty') tips.push(`(${nr}): Prozentwert fehlt noch.`);
+        else if(p.state === 'invalid') tips.push(`(${nr}): Ungültige Eingabe. Schreib eine Zahl wie 12,5 (das Prozentzeichen kannst du weglassen).`);
+        else if(gOk && !pOk) tips.push(`(${nr}): Grundwert stimmt. Rechne gesuchte Anzahl ÷ Grundwert · 100 und runde auf eine Nachkommastelle.${i===0 ? ' Die gesuchte Anzahl ist hier eine Randzelle.' : ''}`);
       });
-      bumpTries(4);
+      bumpTries(4, filled > 0);
       if(allOk){
-        feedback(4,'ok','<b>Richtig.</b> (3) und (4) haben denselben Zähler 45, aber verschiedene Grundwerte: einmal die 80 Dauerkarten-Gäste, einmal die 97 Radfahrenden. Deshalb kommen 56,3 % und 46,4 % heraus. Das ist genau der Punkt aus Aufgabe 1c im Buch.');
-        markDone(4);
-      } else feedback(4,'bad','<b>Noch nicht ganz.</b><ul>' + tips.map(t=>`<li>${t}</li>`).join('') + '</ul>');
+        finish(4, '<b>Richtig.</b> (3) und (4) haben denselben Zähler 45, aber verschiedene Grundwerte: einmal die 80 Dauerkarten-Gäste, einmal die 97 Radfahrenden. Deshalb kommen 56,3 % und 46,4 % heraus. Das ist genau der Punkt aus Aufgabe 1c im Buch.');
+        return;
+      }
+      if(!filled){ feedback(4,'hint','<b>Noch nichts eingetragen.</b> Wähle zuerst bei jeder Frage den Grundwert.'); return; }
+      feedback(4,'bad','<b>Noch nicht ganz.</b>' + list(tips));
     }
   };
+  // Lösung anzeigen: Status sofort auf „mit Lösung“, dauerhaft gespeichert
+  function reveal(n){ state.revealed[n] = true; save(); setStatus(n,'shown'); }
   const solutions = {
-    1(){ tableInputs('#tab1').forEach(i => { i.value = i.dataset.ans; i.classList.remove('bad'); i.classList.add('ok'); }); feedback(1,'hint','<b>Lösung eingetragen.</b> Rechne die Zeilen- und Spaltensummen einmal nach, dann „Neue Tafel“.'); },
-    2(){ tableInputs('#tab2').forEach(i => { i.value = i.dataset.ans; i.classList.remove('bad'); i.classList.add('ok'); }); feedback(2,'hint','<b>Lösung eingetragen.</b> Die vier Zahlen aus dem Text: 30 rechts unten, 18 als Zeilensumme B, 12 als Spaltensumme H, 7 im Feld B ∩ H. Der Rest durch Subtrahieren.'); },
+    1(){ reveal(1); tableInputs(1).forEach(i => { i.value = i.dataset.ans; mark(i,true); }); feedback(1,'hint','<b>Lösung eingetragen.</b> Rechne jede Zeile und jede Spalte einmal nach. Diese Tafel zählt als „mit Lösung“. Wenn du danach eine „Neue Tafel“ allein schaffst, wird Aufgabe 1 grün.'); },
+    2(){ reveal(2); tableInputs(2).forEach(i => { i.value = i.dataset.ans; mark(i,true); }); feedback(2,'hint','<b>Lösung eingetragen.</b> Die vier Zahlen aus dem Text: 30 rechts unten, 18 als Zeilensumme B, 12 als Spaltensumme H, 7 im Innenfeld B ∩ H. Der Rest durch Addieren (Summen) und Subtrahieren (Felder). Die Aufgabe zählt als „mit Lösung“.'); },
     3(){
-      $$('#t3a input').forEach(i => { i.value = i.dataset.ans; i.classList.remove('bad'); i.classList.add('ok'); });
-      $$('#t3b select').forEach(s => { s.value = s.dataset.ans; s.classList.remove('bad'); s.classList.add('ok'); });
-      feedback(3,'hint','<b>Lösung eingetragen.</b> D = 80 (Zeilensumme), R̄ = 103 (Spaltensumme), D ∩ R = 45, D̄ ∩ R̄ = 68. b): D̄ ∩ R, R̄, D ∩ R̄.');
+      reveal(3);
+      $$('#t3a input').forEach(i => { i.value = i.dataset.ans; mark(i,true); });
+      $$('#t3b select').forEach(s => { s.value = s.dataset.ans; mark(s,true); });
+      feedback(3,'hint','<b>Lösung eingetragen.</b> Zu D gehören 80 Gäste (Zeilensumme), zu R̄ 103 (Spaltensumme), zu D ∩ R 45, zu D̄ ∩ R̄ 68. b): D̄ ∩ R, R̄, D ∩ R̄. Die Aufgabe zählt als „mit Lösung“.');
     },
     4(){
+      reveal(4);
       $$('#t4r .row').forEach(row => {
         const sel = $('select', row), inp = $('input', row);
-        sel.value = sel.dataset.g; sel.classList.remove('bad'); sel.classList.add('ok');
-        const v = Number(inp.dataset.ans);
-        inp.value = (Math.round(v*10)/10).toString().replace('.',','); inp.classList.remove('bad'); inp.classList.add('ok');
+        sel.value = sel.dataset.g; mark(sel,true);
+        inp.value = fmt1(Number(inp.dataset.ans)); mark(inp,true);
       });
-      feedback(4,'hint','<b>Lösung eingetragen.</b> (1) 80/200 = 40 %. (2) 45/200 = 22,5 %. (3) 45/80 ≈ 56,3 %. (4) 45/97 ≈ 46,4 %. Der Grundwert steht immer in einer Randzelle.');
+      feedback(4,'hint','<b>Lösung eingetragen.</b> (1) 80/200 = 40 %. (2) 45/200 = 22,5 %. (3) 45/80 ≈ 56,3 %. (4) 45/97 ≈ 46,4 %. Der Grundwert ist hier immer eine Randzelle. Die Aufgabe zählt als „mit Lösung“.');
     }
   };
+  // Aufgabe 1: eine neue Tafel allein lösen hebt „mit Lösung“ wieder auf
+  function newT1Fresh(){ state.revealed[1] = false; save(); newT1(); }
 
   $$('button[data-check]').forEach(b => b.addEventListener('click', () => checks[b.dataset.check]()));
   $$('button[data-solve]').forEach(b => b.addEventListener('click', () => solutions[b.dataset.solve]()));
-  $('button[data-new="1"]').addEventListener('click', newT1);
+  $('button[data-new="1"]').addEventListener('click', newT1Fresh);
   $('#reset').addEventListener('click', e => { e.preventDefault(); try{ localStorage.removeItem('vft-uebung'); }catch(err){} location.reload(); });
+  // Eingabe ändern: Markierung und alte Rückmeldung entfernen, damit rot/grün zum aktuellen Stand passt
+  document.addEventListener('input', e => {
+    if(!e.target.matches('input, select')) return;
+    clearMark(e.target);
+    const card = e.target.closest('.card'); if(card) hideFeedback(card.id.replace('t',''));
+  });
   // Enter im Feld = Prüfen
   document.addEventListener('keydown', e => {
     if(e.key !== 'Enter' || !e.target.matches('input')) return;
+    e.preventDefault();
     const card = e.target.closest('.card'); if(!card) return;
     const n = card.id.replace('t','');
     checks[n] && checks[n]();
